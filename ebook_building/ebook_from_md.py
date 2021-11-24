@@ -197,8 +197,8 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
 
     book_metadata = book_metadata.copy()
 
-    with tempfile.TemporaryDirectory() as working_dir:
-        working_dir_path = Path(working_dir)
+    with tempfile.TemporaryDirectory() as working_dir_bfpath:
+        working_dir_path = Path(working_dir_bfpath.decode())
 
         if 'bibliography_paths' in book_metadata:
             bibliography_tmp_files = []
@@ -264,7 +264,7 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
         renderer_param = _build_renderer_param(render_funct,
                                                params=renderer_params)
 
-        r_build_script = R_COMPILE_SCRIPT_EPUB.format(working_dir=working_dir,
+        r_build_script = R_COMPILE_SCRIPT_EPUB.format(working_dir=working_dir_path,
                                                       index_rmd_path=index_rmd_path,
                                                       output_dir=output_dir,
                                                       renderer_param=renderer_param)
