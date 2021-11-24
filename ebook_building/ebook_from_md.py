@@ -198,7 +198,11 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
     book_metadata = book_metadata.copy()
 
     with tempfile.TemporaryDirectory() as working_dir_bfpath:
-        working_dir_path = Path(working_dir_bfpath.decode())
+        try:
+            # it looks that with python 3.10 with TemporaryDirectory has changed its behaviour
+            working_dir_path = Path(working_dir_bfpath.decode())
+        except AttributeError:
+            working_dir_path = Path(working_dir_bfpath)
 
         if 'bibliography_paths' in book_metadata:
             bibliography_tmp_files = []
