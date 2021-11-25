@@ -215,6 +215,8 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
                 tmp_bib_file.close()
             book_metadata['bibliography'] = bibliography_tmp_files
             del book_metadata['bibliography_paths']
+        else:
+            bibliography_tmp_files = None
 
         if 'citation_style_language_path' in book_metadata:
             orig_path = book_metadata['citation_style_language_path']
