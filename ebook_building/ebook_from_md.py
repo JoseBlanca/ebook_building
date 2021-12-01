@@ -239,8 +239,10 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
         chapter_paths.extend(_get_chapter_md_paths(working_md_chapters_path,
                                                    chapters_to_exclude))
 
+        chapter_paths.sort(key=str)
         chapter_paths.sort(key=lambda path: 0 if 'dedicatoria.md' in str(path) else 1)
         chapter_paths.sort(key=lambda path: 0 if 'front_matter.md' in str(path) else 1)
+        chapter_paths.sort(key=lambda path: 0 if 'index.Rmd' in str(path) else 1)
 
         bookdown_yml_path = working_dir_path / BOOKDOWN_YML_FNAME
         _create_bookdown_yml(bookdown_yml_path, chapter_paths)
