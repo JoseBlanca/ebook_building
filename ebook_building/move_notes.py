@@ -6,7 +6,12 @@ import re
 
 from bs4 import BeautifulSoup
 
-FOOTNOTES_SECTION_CLASS = 'footnotes'
+try:
+    from rich import print
+except ImportError:
+    pass
+
+FOOTNOTES_SECTION_CLASS = 'footnotes footnotes-end-of-document'
 FOOTNOTE_ANCHOR_CLASS = 'footnote-ref'
 
 
@@ -106,7 +111,7 @@ class BookSection(Content):
 
     @property
     def id(self):
-        soup = BeautifulSoup(self.data, "xml")
+        soup = BeautifulSoup(self.data, "lxml")
         section = soup.section
         if section is None:
             raise RuntimeError('No section present')
@@ -117,7 +122,7 @@ class BookSection(Content):
 
     @property
     def title(self):
-        soup = BeautifulSoup(self.data, "xml")
+        soup = BeautifulSoup(self.data, "lxml")
         h1 = soup.h1
 
         span = h1.span
@@ -129,9 +134,10 @@ class BookSection(Content):
         return title
  
     def remove_and_return_footnotes_section(self):
-        soup = BeautifulSoup(self.data, "xml")
+        soup = BeautifulSoup(self.data, "lxml")
 
         bs_tags = soup.find_all(class_=FOOTNOTES_SECTION_CLASS)
+
         if not bs_tags:
             raise RuntimeError('No footnote seccion')
         if len(bs_tags) != 1:
@@ -147,7 +153,7 @@ class BookSection(Content):
         return section
 
     def modify_footnote_links(self, global_footnote_count, path_to_notes_chapter):
-        soup = BeautifulSoup(self.data, "xml")
+        soup = BeautifulSoup(self.data, "lxml")
 
         footnotes_info = []
         for anchor_tag in soup.find_all('a', class_=FOOTNOTE_ANCHOR_CLASS):
@@ -225,7 +231,6 @@ class Epub(_Epub):
     def _modify_footnotes_id_and_backlinks(self, footnote_section, chapter,
                                            info_about_footnotes_in_chapter,
                                            footnotes_chapter):
-
         footnotes_in_chapter_by_old_id = {}
         for info in info_about_footnotes_in_chapter:
             old_id = info['footnote']['old_id']
@@ -241,7 +246,7 @@ class Epub(_Epub):
             back_to_chapter_anchor.attrs['href'] = new_back_href
 
     def _appennd_notes(self, notes_chapter, chapter_footnotes):
-        soup = BeautifulSoup(notes_chapter.data, "xml")
+        soup = BeautifulSoup(notes_chapter.data, "lxml")
 
         h1s = soup.find_all('h1')
         if not h1s:
@@ -280,13 +285,10 @@ class Epub(_Epub):
             path_to_notes_chapter = notes_chapter.path_from(chapter)
             chapter_footnotes_info, global_footnote_count = chapter.modify_footnote_links(global_footnote_count,
                                                                                           path_to_notes_chapter)
-
             chapters_with_footnotes.append({'chapter': chapter,
                                             'footnotes': chapter_footnotes,
                                             'info_about_footnotes_in_chapter': chapter_footnotes_info})
-
         self._appennd_notes(notes_chapter, chapters_with_footnotes)
-        #print(chapter_footnotes)
 
 
 def move_notes_from_each_chapter_to_notes_chapter(in_epub_path, out_epub_path,
