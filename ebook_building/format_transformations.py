@@ -1,6 +1,7 @@
 
 import subprocess
 import platform
+import zipfile
 
 if platform.system() == 'Darwin':
     EBOOK_CONVERT_BIN = '/Applications/calibre.app/Contents/MacOS/ebook-convert'
@@ -30,3 +31,8 @@ def epub_to_pdf(epub_path, pdf_path):
            #'--extra-css', 'h2 {font-size: 1.5em; text-transform: uppercase;}'
           ]
     subprocess.run(cmd, check=True)
+
+
+def unpack_epub(epub_path, out_dir):
+    with zipfile.ZipFile(epub_path, 'r') as epub_as_zip:
+        epub_as_zip.extractall(out_dir)
