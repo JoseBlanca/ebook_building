@@ -189,7 +189,9 @@ def _build_renderer_param(render_funct:str, params=None):
 
 def _build_web_or_epub(output_type, book_metadata, md_files_dir,
                        output_path, cover_image_path=None,
-                       chapters_to_exclude=None, number_sections=True, toc=True, toc_depth=1):
+                       chapters_to_exclude=None, number_sections=True,
+                       toc=True, toc_depth=1,
+                       images_dir=None, images_dir_path_in_md_files=None):
     install_r_packages(['bookdown'])
 
     if chapters_to_exclude is None:
@@ -231,6 +233,10 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
 
         working_md_chapters_path = working_dir_path / 'chapters'
         shutil.copytree(md_files_dir, working_md_chapters_path)
+
+        if images_dir:
+            working_dir_images_path = working_dir_path / images_dir_path_in_md_files 
+            shutil.copytree(images_dir, working_dir_images_path)
 
         front_matter_path = working_md_chapters_path / 'front_matter.md'
         _create_front_matter_chapter(book_metadata, front_matter_path)
@@ -291,7 +297,8 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
 
 
 def build_web(book_metadata, md_files_dir, output_path, cover_image_path=None,
-              chapters_to_exclude=None, number_sections=True, toc_depth=1):
+              chapters_to_exclude=None, number_sections=True, toc_depth=1,
+              images_dir=None, images_dir_path_in_md_files=None):
     _build_web_or_epub('web',
                        book_metadata=book_metadata,
                        md_files_dir=md_files_dir,
@@ -300,11 +307,14 @@ def build_web(book_metadata, md_files_dir, output_path, cover_image_path=None,
                        chapters_to_exclude=chapters_to_exclude,
                        number_sections=number_sections,
                        toc=None,
-                       toc_depth=toc_depth)
+                       toc_depth=toc_depth,
+                       images_dir=images_dir,
+                       images_dir_path_in_md_files=images_dir_path_in_md_files)
 
 
 def build_epub(book_metadata, md_files_dir, output_path, cover_image_path=None,
-               chapters_to_exclude=None, number_sections=True, toc=True, toc_depth=1):
+               chapters_to_exclude=None, number_sections=True, toc=True, toc_depth=1,
+               images_dir=None, images_dir_path_in_md_files=None):
 
     _build_web_or_epub('epub',
                        book_metadata=book_metadata,
@@ -314,7 +324,9 @@ def build_epub(book_metadata, md_files_dir, output_path, cover_image_path=None,
                        chapters_to_exclude=chapters_to_exclude,
                        number_sections=number_sections,
                        toc=toc,
-                       toc_depth=toc_depth)
+                       toc_depth=toc_depth,
+                       images_dir=images_dir,
+                       images_dir_path_in_md_files=images_dir_path_in_md_files)
 
 
 def get_commit_hash(git_dir):
