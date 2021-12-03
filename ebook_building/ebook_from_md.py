@@ -280,7 +280,7 @@ def _build_web_or_epub(output_type, book_metadata, md_files_dir,
 
         if output_type == 'epub':
             tmp_epub_path = output_dir / '_main.epub'
-            shutil.copyfile(tmp_epub_path, output_path)
+            shutil.move(tmp_epub_path, output_path)
         elif output_type == 'web':
             tmp_web_path = output_dir
             if output_path.exists():
